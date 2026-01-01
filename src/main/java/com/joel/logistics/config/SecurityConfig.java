@@ -23,14 +23,26 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+
+                        // Actuator health (ALLOW)
+                        .requestMatchers("/actuator/health").permitAll()
+
+                        // Swagger (ALLOW)
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**")
                         .permitAll()
+
+                        // Auth APIs
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // Admin-only APIs
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
+
+                        // Everything else
                         .anyRequest().authenticated())
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
