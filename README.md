@@ -1,95 +1,136 @@
-# Smart Logistics & Order Management System (Backend)
+# 📦 Smart Logistics & Order Management System
 
-A production-ready backend system built using **Java 17 and Spring Boot**, featuring **JWT-based authentication**, **role-based authorization**, **PostgreSQL persistence**, **Swagger API documentation**, and **Dockerized deployment**.
+A **production-style backend application** that simulates real-world logistics workflows (Swiggy / Zomato–like) with **secure authentication**, **role-based authorization**, and a **strict order lifecycle**.
 
-This project is designed as an **industry-style backend capstone** to demonstrate real-world backend engineering practices.
-
----
-
-## 🚀 Tech Stack
-
-- Java 17  
-- Spring Boot  
-- Spring Security  
-- JWT (JSON Web Token)  
-- PostgreSQL  
-- JPA / Hibernate  
-- Swagger / OpenAPI  
-- Docker & Docker Compose  
-- Maven  
+This project is built as an **industry-ready backend capstone** using Java and Spring Boot.
 
 ---
 
-## ✨ Features
+## 🚀 Features
 
-- Role-based users: **ADMIN, CUSTOMER, DELIVERY_PARTNER**
-- Secure authentication using **JWT**
-- Password encryption with **BCrypt**
-- Role-based API authorization
-- RESTful API design
-- Swagger UI for API documentation and testing
-- Dockerized application with PostgreSQL
-- Health check endpoint for container monitoring
+### 🔐 Authentication & Authorization
+- JWT-based authentication
+- Secure user registration and login
+- Role-based access control
 
----
+### 👥 User Roles
+- **CUSTOMER** – places orders
+- **DELIVERY_PARTNER** – picks assigned orders
+- **ADMIN** – manages and completes orders
 
-## 🧱 Architecture
+### 📦 Order Lifecycle Management
+Orders follow a strict lifecycle:
 
-The application follows a clean layered architecture:
+CREATED → ASSIGNED → PICKED → DELIVERED
 
-- **Controller Layer** – Handles HTTP requests
-- **Service Layer** – Contains business logic
-- **Repository Layer** – Database access using JPA
-- **DTOs** – Request/response validation
-- **Security Layer** – JWT authentication and authorization filter
+Invalid state transitions are blocked using service-layer business rules.
 
----
+### 🛡 Global Exception Handling
+- Centralized exception handling with `@RestControllerAdvice`
+- Clean and consistent API error responses
+- No raw stack traces exposed to clients
 
-## 🔐 Security
-
-- Stateless authentication using JWT
-- Passwords stored using BCrypt hashing
-- Role-based access control with Spring Security
-- Public access only for authentication, Swagger, and health endpoints
+### 📑 API Documentation
+- Swagger / OpenAPI integration
+- JWT authentication supported directly in Swagger UI
 
 ---
 
-## 📘 API Documentation (Swagger)
+## 🛠 Tech Stack
 
-Once the application is running, access Swagger UI:
+| Layer | Technology |
+|-----|-----------|
+| Language | Java 17 |
+| Framework | Spring Boot 3 |
+| Security | Spring Security + JWT |
+| Database | PostgreSQL |
+| ORM | Spring Data JPA (Hibernate) |
+| API Docs | Swagger / OpenAPI |
+| Build Tool | Maven |
+| Containerization | Docker |
+
+---
+
+## 🔐 Authentication Flow
+
+1. User registers using `POST /api/users`
+2. User logs in using `POST /api/auth/login`
+3. Server returns a **JWT token**
+4. Token is sent in request headers:
+   Authorization: Bearer <JWT_TOKEN>
+5. Role-based access is enforced for APIs
+
+---
+
+## 📦 Order APIs Overview
+
+| API Endpoint | Role | Description |
+|--------------|------|------------|
+| `POST /api/orders` | CUSTOMER | Create a new order |
+| `PUT /api/orders/{id}/assign` | ADMIN | Assign order |
+| `PUT /api/orders/{id}/status` | DELIVERY_PARTNER | Pick order |
+| `PUT /api/orders/{id}/status` | ADMIN | Deliver order |
+| `GET /api/orders` | ALL | View orders (role-based) |
+
+---
+
+## 🧪 API Documentation (Swagger)
+
+After starting the application, open:
 
 http://localhost:8085/swagger-ui/index.html
 
 
-Swagger allows interactive testing of all available APIs.
+Swagger supports:
+- JWT Authorize button
+- Full API testing
+- Role-based access validation
 
 ---
 
-## 🐳 Docker Setup
+## 🗄 Database Design (High-Level)
 
-Run the complete application (Backend + PostgreSQL) using Docker Compose:
+### Users Table
+- id
+- name
+- email
+- password (BCrypt encrypted)
+- role
 
+### Orders Table
+- id
+- customer_id
+- total_amount
+- status
 
-docker compose up --build
 ---
-## Services:
 
-Backend API: http://localhost:8085
+## 🐳 Docker Support
 
-Swagger UI: http://localhost:8085/swagger-ui/index.html
+The application is Docker-ready for consistent deployment.
 
-Health Check: http://localhost:8085/actuator/health
----
-## To stop containers:
+### Build & Run
+```bash
+docker-compose up --build
+```
+----
 
-docker compose down
----
-## Key API Endpoints:
+### Key Backend Concepts Implemented
 
-POST /api/auth/login – User login and JWT generation
+JWT authentication and authorization
 
-POST /api/users – Create user (ADMIN only)
----
-## AUTHOR :
+Role-based access control
 
-ALIGI JOEL
+Service-layer business logic
+
+Order lifecycle enforcement
+
+Global exception handling
+
+RESTful API design
+
+Swagger / OpenAPI documentation
+
+Dockerized backend
+
+
