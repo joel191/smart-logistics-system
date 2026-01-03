@@ -24,6 +24,7 @@ public class UserService {
     }
 
     public User createUser(CreateUserRequest request) {
+
         Role role = roleRepository.findByName(request.getRole())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 

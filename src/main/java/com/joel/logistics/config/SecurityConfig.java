@@ -1,14 +1,18 @@
 package com.joel.logistics.config;
 
+import org.springframework.http.HttpMethod;
+
 import com.joel.logistics.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
 
@@ -24,25 +28,28 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
 
-                        // Actuator health (ALLOW)
-                        .requestMatchers("/actuator/health").permitAll()
-
-                        // Swagger (ALLOW)
+                        // Swagger & OpenAPI
                         .requestMatchers(
-                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/swagger-ui/**")
+                                "/v3/api-docs/**")
                         .permitAll()
 
-                        // Auth APIs
+                        // Health
+                        .requestMatchers("/actuator/health").permitAll()
+
+                        // Auth
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Admin-only APIs
-                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        // User registration (public)
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+
+                        // Orders (secured)
+                        .requestMatchers("/api/orders/**")
+                        .hasAnyRole("ADMIN", "CUSTOMER", "DELIVERY_PARTNER")
 
                         // Everything else
                         .anyRequest().authenticated())
-
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

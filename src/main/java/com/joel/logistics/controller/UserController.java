@@ -3,7 +3,6 @@ package com.joel.logistics.controller;
 import com.joel.logistics.dto.CreateUserRequest;
 import com.joel.logistics.service.UserService;
 import com.joel.logistics.user.User;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +16,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody @Valid CreateUserRequest request) {
+    public User createUser(@RequestBody CreateUserRequest request) {
         return userService.createUser(request);
     }
 }
